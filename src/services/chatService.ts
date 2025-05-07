@@ -54,8 +54,12 @@ class ChatService {
       return "I'm sorry, web scraping is unavailable at the moment as I can't connect to the backend service.";
     } else if (lowerMessage.startsWith('www') || lowerMessage.includes('.com') || lowerMessage.includes('http')) {
       return "I detected a URL, but I can't scrape websites at the moment as the backend service is unavailable.";
+    } else if (lowerMessage.includes('weather') || lowerMessage.includes('forecast') || lowerMessage.includes('temperature')) {
+      return "I'd love to help you check the weather, but I'm currently operating in offline mode. To get weather information, you'll need to ensure the Flask backend is running at http://localhost:5000. Make sure you've installed the necessary Python packages and started the Flask server.";
+    } else if (lowerMessage.includes('search')) {
+      return "I noticed you want to search for something. However, I'm currently in offline mode because I can't connect to the Flask backend. Please make sure the Flask server is running at http://localhost:5000 with all required dependencies installed.";
     } else {
-      return "I'm sorry, I'm currently operating in offline mode and can't process complex requests. Try asking me simple questions or check if the Flask backend is running correctly.";
+      return "I'm sorry, I'm currently operating in offline mode and can't process complex requests. Try asking me simple questions or check if the Flask backend is running correctly at http://localhost:5000.";
     }
   }
 }
