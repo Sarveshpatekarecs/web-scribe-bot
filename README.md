@@ -1,73 +1,78 @@
-# Welcome to your Lovable project
 
-## Project info
+# Jarvis AI Assistant
 
-**URL**: https://lovable.dev/projects/fc03686d-8880-4f82-b78d-0d605f2c804b
+An AI assistant with a beautiful UI that connects to a Python Flask backend for intelligent responses.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- Modern, dynamic UI with gradient animations
+- Real-time chat interface
+- Text-to-speech capabilities with female voice
+- Web scraping functionality (when backend is running)
+- Fallback responses when offline
 
-**Use Lovable**
+## Getting Started
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fc03686d-8880-4f82-b78d-0d605f2c804b) and start prompting.
+### Frontend Setup
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Install dependencies:
+```bash
+npm install
+```
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+3. Open your browser and navigate to `http://localhost:5173` (or the URL shown in your terminal)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Backend Setup
 
-**Use GitHub Codespaces**
+1. Navigate to the `backend` directory
+2. Install the required Python packages:
+```bash
+pip install flask chatterbot==1.0.4 chatterbot-corpus requests beautifulsoup4
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+3. Start the Flask server:
+```bash
+python app.py
+```
 
-## What technologies are used for this project?
+The backend will run on `http://localhost:5000`.
 
-This project is built with:
+## How to Use
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Type messages in the input field and press Enter or click the Send button
+- Try commands like:
+  - "Hello" or "Hi" - Basic greeting
+  - "How are you?" - Ask about Jarvis
+  - "scrape https://example.com" - Scrape content from a website (requires backend)
+  - "Search for something" - Perform a search (requires backend)
+  - Weather-related questions (requires backend)
 
-## How can I deploy this project?
+## Troubleshooting
 
-Simply open [Lovable](https://lovable.dev/projects/fc03686d-8880-4f82-b78d-0d605f2c804b) and click on Share -> Publish.
+If the frontend can't connect to the backend:
 
-## Can I connect a custom domain to my Lovable project?
+1. Make sure the Flask server is running
+2. Check that it's running on port 5000
+3. Verify that the required Python packages are installed
+4. Check for any CORS issues in the browser console
 
-Yes, you can!
+## Voice Controls
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Toggle the speaker icon to enable/disable voice responses
+- Adjust voice settings in the speechService.ts file if needed
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Backend Information
+
+The backend uses:
+- Flask for API endpoints
+- ChatterBot for AI responses
+- BeautifulSoup for web scraping
+
+## Note
+
+This project demonstrates a React frontend with a Python backend integration. For production use, additional security measures and optimizations should be implemented.

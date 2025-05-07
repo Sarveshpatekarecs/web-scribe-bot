@@ -14,6 +14,34 @@ class ChatService {
     this.baseUrl = 'http://localhost:5000';
   }
 
+  async checkConnection(): Promise<boolean> {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const response = await fetch(`${this.baseUrl}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'ping' }),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        this.isBackendAvailable = true;
+        return true;
+      }
+      
+      this.isBackendAvailable = false;
+      return false;
+    } catch (error) {
+      console.error('Backend connection check failed:', error);
+      this.isBackendAvailable = false;
+      return false;
+    }
+  }
+
   async sendMessage(message: string): Promise<string> {
     // If we know the backend is unavailable, use fallback responses
     if (!this.isBackendAvailable) {
