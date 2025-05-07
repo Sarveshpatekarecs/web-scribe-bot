@@ -5,7 +5,7 @@ import { chatService } from '@/services/chatService';
 import { speechService } from '@/services/speechService';
 import Message from './Message';
 import JarvisLoader from './JarvisLoader';
-import { Send, Mic, Circle, Volume2, VolumeX, Sparkles, RefreshCw, Search, Menu } from 'lucide-react';
+import { Send, Mic, Circle, Volume2, VolumeX, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -30,6 +30,7 @@ const ChatInterface: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const [isBackendConnected, setIsBackendConnected] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const messageContainerRef = useRef<HTMLDivElement>(null);
@@ -37,6 +38,18 @@ const ChatInterface: React.FC = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Check backend connection on component mount
+  useEffect(() => {
+    checkBackendConnection();
+    
+    // Poll for backend connection every 30 seconds
+    const intervalId = setInterval(() => {
+      checkBackendConnection();
+    }, 30000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -94,13 +107,24 @@ const ChatInterface: React.FC = () => {
   const checkBackendConnection = async () => {
     setIsConnecting(true);
     try {
-      await chatService.checkConnection();
-      toast({
-        title: 'Connection Successful',
-        description: 'Connected to the Jarvis backend server',
-        variant: 'default',
-      });
+      const isConnected = await chatService.checkConnection();
+      setIsBackendConnected(isConnected);
+      
+      if (isConnected) {
+        toast({
+          title: 'Connection Successful',
+          description: 'Connected to the Jarvis backend server',
+          variant: 'default',
+        });
+      } else {
+        toast({
+          title: 'Connection Failed',
+          description: 'Could not connect to the Jarvis backend server. Running in offline mode.',
+          variant: 'destructive',
+        });
+      }
     } catch (error) {
+      setIsBackendConnected(false);
       toast({
         title: 'Connection Failed',
         description: 'Could not connect to the Jarvis backend server. Running in offline mode.',
@@ -139,7 +163,12 @@ const ChatInterface: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Jarvis</h2>
-              <p className="text-xs text-cyan-300/80">AI Assistant</p>
+              <p className="text-xs text-cyan-300/80">
+                {isBackendConnected ? 
+                  <span className="flex items-center"><span className="w-2 h-2 rounded-full bg-green-500 mr-1 inline-block"></span>Online</span> : 
+                  <span className="flex items-center"><span className="w-2 h-2 rounded-full bg-red-500 mr-1 inline-block"></span>Offline</span>
+                }
+              </p>
             </div>
           </div>
           <div className="flex space-x-2">
@@ -212,7 +241,10 @@ const ChatInterface: React.FC = () => {
         </div>
         <div className="flex items-center justify-between mt-3">
           <p className="text-xs text-slate-400 italic">
-            Try: "Hello", "Tell me about yourself" or "Search for something"
+            {isBackendConnected ? 
+              "Try: \"Hello\", \"Tell me about yourself\" or \"scrape https://example.com\"" : 
+              "Try: \"Hello\", \"Tell me about yourself\" (Backend offline - limited features available)"
+            }
           </p>
           <div className="flex items-center space-x-1">
             <Sparkles className="w-3 h-3 text-cyan-400" />

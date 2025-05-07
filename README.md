@@ -32,7 +32,7 @@ npm run dev
 1. Navigate to the `backend` directory
 2. Install the required Python packages:
 ```bash
-pip install flask chatterbot==1.0.4 chatterbot-corpus requests beautifulsoup4
+pip install flask chatterbot==1.0.4 chatterbot-corpus requests beautifulsoup4 flask-cors
 ```
 
 3. Start the Flask server:
@@ -40,7 +40,7 @@ pip install flask chatterbot==1.0.4 chatterbot-corpus requests beautifulsoup4
 python app.py
 ```
 
-The backend will run on `http://localhost:5000`.
+The backend will run on `http://127.0.0.1:5000`.
 
 ## How to Use
 
@@ -60,6 +60,7 @@ If the frontend can't connect to the backend:
 2. Check that it's running on port 5000
 3. Verify that the required Python packages are installed
 4. Check for any CORS issues in the browser console
+5. Try restarting both the frontend and backend servers
 
 ## Voice Controls
 
@@ -72,6 +73,7 @@ The backend uses:
 - Flask for API endpoints
 - ChatterBot for AI responses
 - BeautifulSoup for web scraping
+- Flask-CORS for handling cross-origin requests
 
 ## Note
 

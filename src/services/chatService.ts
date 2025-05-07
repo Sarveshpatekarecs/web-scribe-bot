@@ -10,29 +10,31 @@ class ChatService {
   private isBackendAvailable: boolean = true;
 
   constructor() {
-    // Update this URL based on where your Flask backend is running
-    this.baseUrl = 'http://localhost:5000';
+    // Update URL to use the correct host and port
+    this.baseUrl = 'http://127.0.0.1:5000';
   }
 
   async checkConnection(): Promise<boolean> {
     try {
+      console.log("Checking backend connection...");
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
-      const response = await fetch(`${this.baseUrl}/chat`, {
-        method: 'POST',
+      const response = await fetch(`${this.baseUrl}/ping`, {
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'ping' }),
         signal: controller.signal
       });
       
       clearTimeout(timeoutId);
       
       if (response.ok) {
+        console.log("Backend connection successful!");
         this.isBackendAvailable = true;
         return true;
       }
       
+      console.error("Backend connection failed:", response.status);
       this.isBackendAvailable = false;
       return false;
     } catch (error) {
@@ -49,6 +51,7 @@ class ChatService {
     }
 
     try {
+      console.log("Sending message to backend:", message);
       const response = await fetch(`${this.baseUrl}/chat`, {
         method: 'POST',
         headers: {
@@ -62,9 +65,10 @@ class ChatService {
       }
 
       const data: ChatResponse = await response.json();
+      console.log("Received response from backend:", data.reply);
       return data.reply;
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message to backend:', error);
       this.isBackendAvailable = false;
       return this.getFallbackResponse(message);
     }
@@ -83,11 +87,11 @@ class ChatService {
     } else if (lowerMessage.startsWith('www') || lowerMessage.includes('.com') || lowerMessage.includes('http')) {
       return "I detected a URL, but I can't scrape websites at the moment as the backend service is unavailable.";
     } else if (lowerMessage.includes('weather') || lowerMessage.includes('forecast') || lowerMessage.includes('temperature')) {
-      return "I'd love to help you check the weather, but I'm currently operating in offline mode. To get weather information, you'll need to ensure the Flask backend is running at http://localhost:5000. Make sure you've installed the necessary Python packages and started the Flask server.";
+      return "I'd love to help you check the weather, but I'm currently operating in offline mode. To get weather information, you'll need to ensure the Flask backend is running at http://127.0.0.1:5000. Make sure you've installed the necessary Python packages and started the Flask server.";
     } else if (lowerMessage.includes('search')) {
-      return "I noticed you want to search for something. However, I'm currently in offline mode because I can't connect to the Flask backend. Please make sure the Flask server is running at http://localhost:5000 with all required dependencies installed.";
+      return "I noticed you want to search for something. However, I'm currently in offline mode because I can't connect to the Flask backend. Please make sure the Flask server is running at http://127.0.0.1:5000 with all required dependencies installed.";
     } else {
-      return "I'm sorry, I'm currently operating in offline mode and can't process complex requests. Try asking me simple questions or check if the Flask backend is running correctly at http://localhost:5000.";
+      return "I'm sorry, I'm currently operating in offline mode and can't process complex requests. Try asking me simple questions or check if the Flask backend is running correctly at http://127.0.0.1:5000.";
     }
   }
 }

@@ -4,8 +4,11 @@ from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
 import requests
 from bs4 import BeautifulSoup
+from flask_cors import CORS
 
 app = Flask(__name__)
+# Enable CORS for all routes and origins
+CORS(app)
 
 # Set up the chatbot
 chatbot = ChatBot('AI Chatbot', storage_adapter='chatterbot.storage.SQLStorageAdapter', 
@@ -44,5 +47,10 @@ def chat():
     response = chatbot.get_response(message)
     return jsonify({"reply": str(response)})
 
+# Add a simple route to check if the server is running
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({"status": "ok", "message": "Jarvis backend is running!"})
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
