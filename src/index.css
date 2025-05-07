@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,20 +36,20 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Jarvis theme colors */
+    --jarvis-primary: 199 100% 50%;
+    --jarvis-secondary: 199 100% 65%;
+    --jarvis-accent: 199 100% 40%;
+    --jarvis-background: 210 30% 8%;
+    --jarvis-foreground: 0 0% 100%;
   }
 
   .dark {
@@ -98,4 +99,74 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Additional Jarvis styling */
+.jarvis-theme {
+  background-color: hsl(var(--jarvis-background));
+  color: hsl(var(--jarvis-foreground));
+}
+
+.message-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 1rem;
+  scroll-behavior: smooth;
+}
+
+.message {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  max-width: 80%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.user-message {
+  background-color: hsl(217.2 32.6% 17.5%);
+  color: hsl(var(--jarvis-foreground));
+  margin-left: auto;
+  border-top-right-radius: 0;
+}
+
+.bot-message {
+  background-color: hsl(var(--jarvis-accent) / 0.2);
+  color: hsl(var(--jarvis-foreground));
+  margin-right: auto;
+  border-top-left-radius: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+.pulse-ring {
+  animation: pulse 2s infinite;
+  border-radius: 50%;
+  background-color: hsl(var(--jarvis-primary) / 0.3);
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
