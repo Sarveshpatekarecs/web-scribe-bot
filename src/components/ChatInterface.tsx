@@ -2,9 +2,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { chatService } from '@/services/chatService';
+import { speechService } from '@/services/speechService';
 import Message from './Message';
 import JarvisLoader from './JarvisLoader';
-import { Send, Mic, Circle } from 'lucide-react';
+import { Send, Mic, Circle, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -26,6 +27,7 @@ const ChatInterface: React.FC = () => {
   ]);
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -35,7 +37,20 @@ const ChatInterface: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+    
+    // Speak the latest bot message if it exists and speech is enabled
+    const latestMessage = messages[messages.length - 1];
+    if (latestMessage && !latestMessage.isUser && !isMuted) {
+      speechService.speak(latestMessage.text);
+    }
+  }, [messages, isMuted]);
+
+  // Speak welcome message on first load
+  useEffect(() => {
+    if (!isMuted && messages.length > 0) {
+      speechService.speak(messages[0].text);
+    }
+  }, []);
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -79,18 +94,36 @@ const ChatInterface: React.FC = () => {
     }
   };
 
+  const toggleMute = () => {
+    if (!isMuted) {
+      speechService.stop();
+    }
+    setIsMuted(!isMuted);
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-900 rounded-lg shadow-xl overflow-hidden">
       <div className="bg-gradient-to-r from-blue-900 to-slate-800 p-4 border-b border-slate-700">
-        <div className="flex items-center space-x-3">
-          <div className="relative w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-            <div className="absolute inset-0 bg-blue-400 rounded-full animate-pulse opacity-75"></div>
-            <Circle className="w-6 h-6 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="relative w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+              <div className="absolute inset-0 bg-blue-400 rounded-full animate-pulse opacity-75"></div>
+              <Circle className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Jarvis</h2>
+              <p className="text-xs text-blue-300">AI Assistant</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-white">Jarvis</h2>
-            <p className="text-xs text-blue-300">AI Assistant</p>
-          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleMute} 
+            className="text-slate-300 hover:bg-slate-800 hover:text-white"
+            title={isMuted ? "Enable voice" : "Disable voice"}
+          >
+            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </Button>
         </div>
       </div>
 
@@ -131,7 +164,7 @@ const ChatInterface: React.FC = () => {
           </Button>
         </div>
         <p className="text-xs text-slate-500 mt-2">
-          Try: "scrape https://example.com" or ask questions
+          Try: "Hello", "How are you" or "Tell me about yourself"
         </p>
       </div>
     </div>
